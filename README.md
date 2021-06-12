@@ -6,7 +6,7 @@ Please modify the ISE hostname, admin account and password in the script!
 
 Use this way:
 
-<span style="font-family:courier-new; font-size:4em;">
+<span style="font-family:courier; font-size:4em;">
 $ python3 ise_endpoints.py  
 ISE Endpoints:  
 Total number of endpoints: 140  
