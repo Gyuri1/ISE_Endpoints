@@ -7,7 +7,6 @@ Please modify the ISE hostname, admin account and password in the script!
 Use this way:
 
  
- I am in <span style="font-family:Papyrus; font-size:4em;">LOVE!</span>
   
 $ python3 ise_endpoints.py  
 ISE Endpoints:  
