@@ -40,7 +40,7 @@ def GetProfileName(EndpointID):
     response = requests.get(baseurl, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
     response.raise_for_status()
   except requests.exceptions.HTTPError as err:
-    print("Error: ",  err, baseurl  )
+    print(f'Error: {err}, URL:{baseurl}, Endpoint: {res1["ERSEndPoint"]}')
     #raise SystemExit(err)
   res2=json.loads(response.text)
   try:
