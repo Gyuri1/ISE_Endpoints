@@ -153,6 +153,5 @@ if __name__ == "__main__":
         print("python3 ise_endpoints.py [profiling_info=true]" )
         exit()
     List_ISE_Endpoints()
-    List_Profiles()
 
 
