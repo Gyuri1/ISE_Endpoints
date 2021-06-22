@@ -5,7 +5,7 @@ import sys
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-ISE_hostname="ise.local"
+ISE_hostname="ise"
 ISE_admin="admin"
 ISE_password="secret"
 
@@ -32,7 +32,7 @@ def GetProfileName(EndpointID):
 
   profileID = res1["ERSEndPoint"]["profileId"]  
 
-  if profileID == "":
+  if profileID == "" :
       return "Not_Profiled"
 
   baseurl = "https://"+ISE_hostname +":9060/ers/config/profilerprofile/"+profileID
@@ -40,7 +40,8 @@ def GetProfileName(EndpointID):
     response = requests.get(baseurl, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
     response.raise_for_status()
   except requests.exceptions.HTTPError as err:
-    raise SystemExit(err)
+    print("Error: ",  err, baseurl  )
+    #raise SystemExit(err)
   res2=json.loads(response.text)
   try:
     name=res2["ProfilerProfile"]["name"]
@@ -80,6 +81,8 @@ def List_ISE_Endpoints_with_Profile():
 
 def List_ISE_Endpoints():
   dev=0
+  baseurl = "https://"+ISE_hostname +":9060/ers/config/endpoint"
+
   try:
     response = requests.get(baseurl, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
     response.raise_for_status()
@@ -109,6 +112,35 @@ def List_ISE_Endpoints():
       print(dev,":",device["name"])
 
 
+def List_Profiles():
+  dev=0
+  baseurl = "https://"+ISE_hostname +":9060/ers/config/profilerprofile"
+  try:
+    response = requests.get(baseurl, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
+    response.raise_for_status()
+  except requests.exceptions.HTTPError as err:
+    raise SystemExit(err)
+
+  res = json.loads(response.text)
+  for device in res["SearchResult"]["resources"]:
+    dev=dev+1
+    print(dev,":",device["name"])  
+
+
+  while "nextPage" in res["SearchResult"] :
+  # use the next page reference after we've retrieved the first page    
+    url = res["SearchResult"]["nextPage"]["href"]
+    try:
+      response = requests.get(url, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
+      response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+      raise SystemExit(err)
+
+    res = json.loads(response.text)
+    for device in res["SearchResult"]["resources"]:
+      dev=dev+1
+      print(dev,":",device["name"])
+
 # main 
 if __name__ == "__main__":
     print("List ISE Endpoints:")
@@ -121,5 +153,6 @@ if __name__ == "__main__":
         print("python3 ise_endpoints.py [profiling_info=true]" )
         exit()
     List_ISE_Endpoints()
+    List_Profiles()
 
 
