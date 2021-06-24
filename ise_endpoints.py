@@ -5,10 +5,9 @@ import sys
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-ISE_hostname="ise"
-ISE_admin="admin"
-ISE_password="secret"
-
+ISE_hostname="10.10.20.70"
+ISE_admin="apiadmin"
+ISE_password="C1sco123"
 
 total=0
 payload={}
@@ -28,23 +27,27 @@ def GetProfileName(EndpointID):
     raise SystemExit(err)
   #print(response.text)
   
-  res1=json.loads(response.text)
 
-  profileID = res1["ERSEndPoint"]["profileId"]  
-
+  try:
+    json_response = json.loads(response.text)
+    profileID = json_response["ERSEndPoint"]["profileId"]  
+  except:  
+    print(f'Error! Endpoint: {response}')
   if profileID == "" :
       return "Not_Profiled"
 
   baseurl = "https://"+ISE_hostname +":9060/ers/config/profilerprofile/"+profileID
+
   try:
     response = requests.get(baseurl, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
     response.raise_for_status()
   except requests.exceptions.HTTPError as err:
-    print(f'Error: {err}, URL:{baseurl}, Endpoint: {res1["ERSEndPoint"]}')
+    print(f'Error: {err}, URL:{baseurl}, Endpoint: {json_response["ERSEndPoint"]}')
     #raise SystemExit(err)
-  res2=json.loads(response.text)
+
   try:
-    name=res2["ProfilerProfile"]["name"]
+    json_response_profile=json.loads(response.text)
+    name=json_response_profile["ProfilerProfile"]["name"]
   except:
     name="No_profilename_yet"
   return name
@@ -111,35 +114,6 @@ def List_ISE_Endpoints():
       dev=dev+1
       print(dev,":",device["name"])
 
-
-def List_Profiles():
-  dev=0
-  baseurl = "https://"+ISE_hostname +":9060/ers/config/profilerprofile"
-  try:
-    response = requests.get(baseurl, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
-    response.raise_for_status()
-  except requests.exceptions.HTTPError as err:
-    raise SystemExit(err)
-
-  res = json.loads(response.text)
-  for device in res["SearchResult"]["resources"]:
-    dev=dev+1
-    print(dev,":",device["name"])  
-
-
-  while "nextPage" in res["SearchResult"] :
-  # use the next page reference after we've retrieved the first page    
-    url = res["SearchResult"]["nextPage"]["href"]
-    try:
-      response = requests.get(url, headers=headers, data=payload, verify=False, auth=(ISE_admin, ISE_password))
-      response.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-      raise SystemExit(err)
-
-    res = json.loads(response.text)
-    for device in res["SearchResult"]["resources"]:
-      dev=dev+1
-      print(dev,":",device["name"])
 
 # main 
 if __name__ == "__main__":
