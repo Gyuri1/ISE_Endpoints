@@ -36,6 +36,6 @@ Total number of endpoints: 140
 140,00:51:5E:AE:AB:48,Cisco-Device  
 
 
-# Script can generate a CSV file if you direct the output into a CSV file, like this way:
+# Script can generate a CSV file if you redirect the output into a CSV file, like this way:
 
 $ python3 ise_endpoints.py profiling_info=true > output.csv
