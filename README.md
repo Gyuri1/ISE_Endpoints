@@ -39,3 +39,8 @@ Total number of endpoints: 140
 # Script can generate a CSV file if you redirect the output into a CSV file, like this way:
 
 $ python3 ise_endpoints.py profiling_info=true > output.csv
+
+# Or this way:
+
+$ python3 ise_endpoints.py profiling_info=true csvfilename=output.csv
+
